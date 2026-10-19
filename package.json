@@ -1,14 +1,16 @@
 {
   "name": "mabrig-accesslearn",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "test": "vitest run",
-    "check": "npm run test && npm run build"
+    "check": "npm run check:offline && npm run test && npm run build",
+    "deploy:worker": "npm run build && wrangler deploy",
+    "check:offline": "node --experimental-strip-types tests/offline-upgrade.test.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",
@@ -24,6 +26,7 @@
     "@vitejs/plugin-react": "^5.1.0",
     "typescript": "^5.9.0",
     "vite": "^7.1.0",
-    "vitest": "^3.2.0"
+    "vitest": "^3.2.0",
+    "wrangler": "^4.46.0"
   }
 }
