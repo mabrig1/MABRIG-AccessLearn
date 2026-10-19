@@ -26,7 +26,7 @@ export function parseBackup(raw: string): LibraryBackupLesson[] {
     if(!pack||typeof pack!=='object'||!text(pack.title,120)||!text(pack.simplified,12000)||!['local','cloud'].includes(String(pack.mode))||!text(pack.createdAt,80)||!strArray(pack.objectives,10)||!strArray(pack.audit,30))return false
     if(!Array.isArray(pack.quiz)||pack.quiz.length>10||!pack.quiz.every((q:unknown)=>{
       const a=q as Record<string,unknown>
-      return a&&text(a.question,400)&&strArray(a.options,4)&&a.options.length===4&&Number.isInteger(a.correctIndex)&&Number(a.correctIndex)>=0&&Number(a.correctIndex)<4&&text(a.explanation,500)&&text(a.evidence,350)
+      return a&&text(a.question,400)&&Array.isArray(a.options)&&a.options.length===4&&strArray(a.options,4)&&Number.isInteger(a.correctIndex)&&Number(a.correctIndex)>=0&&Number(a.correctIndex)<4&&text(a.explanation,500)&&text(a.evidence,350)
     }))return false
     return Array.isArray(pack.glossary)&&pack.glossary.length<=20&&pack.glossary.every((g:unknown)=>{const a=g as Record<string,unknown>;return a&&text(a.term,70)&&text(a.definition,300)&&text(a.evidence,350)})
   }
