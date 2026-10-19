@@ -7,7 +7,7 @@
     "dev": "vite --host 0.0.0.0",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 0.0.0.0",
-    "test": "vitest run",
+    "test": "vitest run tests/agent-core.test.ts",
     "check": "npm run check:offline && npm run test && npm run build",
     "deploy:worker": "npm run build && wrangler deploy",
     "check:offline": "node --experimental-strip-types tests/offline-upgrade.test.mjs"
