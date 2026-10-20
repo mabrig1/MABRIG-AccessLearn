@@ -1,6 +1,6 @@
 # MABRIG AccessLearn — inclusive classroom agent prototype
 
-**Status: source-code prototype; offline core smoke-tested, frontend dependency installation/build and cloud deployment NOT verified.** Mobile-responsive offline-capable Vite/React PWA, designed for a low-cost Cloudflare Pages deployment. No fake grant claims, fake analytics or fabricated accessibility certification.
+**Status: source-code prototype. GitHub Actions has verified the frontend tests, TypeScript/Vite production build and Cloudflare Worker dry-run bundle. Live Cloudflare deployment and real-device accessibility remain UNVERIFIED.** Mobile-responsive offline-capable Vite/React PWA, designed for a low-cost Cloudflare Pages deployment. No fake grant claims, fake analytics or fabricated accessibility certification.
 
 ## Working prototype features
 
@@ -23,9 +23,22 @@ npm run dev
 
 Open the URL printed by Vite. Optional environment settings: copy `.env.example` to `.env.local` and insert your Supabase URL and publishable/anon key. This public key is safe to expose **only when RLS is properly configured**; never expose Supabase `service_role`.
 
-No npm install/build verification was possible in the authoring environment because package installation did not complete. Run the commands above, resolve any TypeScript or dependency errors and check browser behaviour before publishing.
+GitHub Actions performs dependency installation, offline regression tests, Vitest tests, TypeScript/Vite build, and a credential-free Wrangler Worker bundle check. Passing CI does not establish that the live website is deployed or usable with screen readers.
 
-## Cloudflare Pages deployment
+## Cloudflare Workers Builds deployment (matches the existing project)
+
+1. Connect this GitHub repository and set production branch to `main`.
+2. Configure **build command** `npm run build` (Cloudflare currently showed `None`), **deploy command** `npx wrangler deploy`, root `/`.
+3. Configuration is in `wrangler.jsonc`, which deploys the `dist` static assets and `src/worker.ts` for `/api/agents` and `/api/health`.
+4. Retry a deployment. The CI dry run verifies bundling but does not grant Cloudflare account permissions or verify the live URL.
+5. After deployment, open `/api/health`; it must return `{"service":"MABRIG AccessLearn","version":"0.2.0","status":"ok"}`.
+6. Add secure runtime secrets on Cloudflare, then verify teacher authentication and authorised agent access. Never put your OpenRouter key in public `VITE_` variables.
+
+### Alternative: deploy manually from GitHub Actions
+
+The `.github/workflows/deploy-cloudflare.yml` workflow is **manual-only**. Before selecting **Actions → Deploy AccessLearn to Cloudflare Workers → Run workflow**, add `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` as *repository Actions secrets* (not as source files). The Cloudflare token should have the minimum required Workers deployment permissions, scoped to the intended account. This workflow checks the app, validates the Worker bundle, then deploys. Do **not** run if the GitHub token is not configured; it will deliberately fail rather than silently fall back.
+
+## Cloudflare Pages deployment (alternative)
 
 1. Create a new GitHub repository for this project and push its files (no credentials in Git).
 2. Connect it to **Cloudflare Pages** (React/Vite, build command `npm run build`, output `dist`). Cloudflare Pages Functions automatically deploys `/functions/api/agents.ts` with the Pages project. This is the documented Cloudflare Pages full-stack Vite architecture, not an incompatible Next.js SSR-on-Pages path.
