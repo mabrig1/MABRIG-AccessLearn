@@ -17,3 +17,5 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Run tests and production build
         run: npm run check
+      - name: Validate Cloudflare Worker bundle without deploying
+        run: npx wrangler deploy --dry-run --outdir .wrangler-build
